@@ -24,7 +24,7 @@ def run_benchmark(bucket):
             stdout_backup = sys.stdout
             with open(output_file, 'w') as f:
                 sys.stdout = f
-                s3_bench_throughput(bucket, workload_path, n_ops, n_proc)
+                s3_bench_throughput(bucket, workload_path, workload_off, n_ops, n_proc)
             sys.stdout = stdout_backup
             workload_off += n_ops
         logging.info("Benchmarking sync latency for workload path %s" % workload_path)
