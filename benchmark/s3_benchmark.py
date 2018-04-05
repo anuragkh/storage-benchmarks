@@ -1,6 +1,8 @@
 import logging
 
 import boto3
+import botocore
+from botocore.exceptions import ClientError
 
 from benchmark.latency import benchmark_latency
 from benchmark.throughput import benchmark_throughput
@@ -16,7 +18,13 @@ class S3Client:
         self.bucket_name = bucket_name
 
     def get(self, key):
-        return self.client.get_object(Bucket=self.bucket_name, Key=key)['Body'].read()
+        try:
+            return self.client.get_object(Bucket=self.bucket_name, Key=key)['Body'].read()
+        except ClientError as ex:
+            if ex.response['Error']['Code'] == 'NoSuchKey':
+                return "key_not_found"
+            else:
+                raise ex
 
     def put(self, key, value):
         return self.client.put_object(Bucket=self.bucket_name, Key=key, Body=value)['VersionId']
@@ -25,7 +33,13 @@ class S3Client:
         return self.put(key, value)
 
     def remove(self, key):
-        return self.client.delete_object(Bucket=self.bucket_name, Key=key)['VersionId']
+        try:
+            return self.client.delete_object(Bucket=self.bucket_name, Key=key)['VersionId']
+        except ClientError as ex:
+            if ex.response['Error']['Code'] == 'NoSuchKey':
+                return "key_not_found"
+            else:
+                raise ex
 
     def remove_all(self):
         paginator = self.client.get_paginator('list_objects_v2')
