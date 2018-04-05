@@ -41,6 +41,6 @@ def run_benchmark(bucket):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='Benchmark S3 operations.')
-    parser.add_argument('--bucket', type=str, nargs=1, required=True, help='S3 bucket name')
+    parser.add_argument('--bucket', type=str, required=True, help='S3 bucket name')
     args = parser.parse_args()
     run_benchmark(args.bucket)

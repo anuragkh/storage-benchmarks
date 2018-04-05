@@ -56,7 +56,7 @@ def run_benchmark(host, port):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='Benchmark Redis operations.')
-    parser.add_argument('--host', type=str, nargs=1, default='127.0.0.1', help='Redis host')
-    parser.add_argument('--port', type=int, nargs=1, default=6379, help='Redis port')
+    parser.add_argument('--host', type=str, default='127.0.0.1', help='Redis host')
+    parser.add_argument('--port', type=int, default=6379, help='Redis port')
     args = parser.parse_args()
     run_benchmark(args.host, args.port)
