@@ -16,9 +16,9 @@ def _load_and_run_latency_benchmark(client_builder, workload_path, workload_off=
     tot_time = 0.0
     logging.info("Starting latency benchmark...")
     while ops < len(workload):
-        begin = time.clock()
+        begin = time.time()
         workload[ops][0](*workload[ops][1])
-        tot = time.clock() - begin
+        tot = time.time() - begin
         print "%f" % (tot * 1e6)
         ops += 1
         tot_time += (tot * 1e6)

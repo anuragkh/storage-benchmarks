@@ -30,13 +30,13 @@ def _load_and_run_workload(n_load, load_cv, start_cv, workload_path, workload_of
     logging.info("[Process] Starting benchmark...")
 
     ops = 0
-    begin = time.clock()
+    begin = time.time()
     while ops < len(workload):
         workload[ops][0](*workload[ops][1])
         ops += 1
         if ops % log_interval == 0:
             logging.info("[Process] Completed %d ops" % ops)
-    end = time.clock()
+    end = time.time()
 
     logging.info("[Process] Benchmark completed: %d ops in %f seconds" % (ops, (end - begin)))
     print float(ops) / (end - begin)
