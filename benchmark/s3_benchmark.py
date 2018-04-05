@@ -55,7 +55,7 @@ class S3ClientBuilder:
 
 def s3_bench_throughput(bucket, workload_path, workload_off=0, n_ops=100000, n_procs=1):
     client_builder = S3ClientBuilder(bucket)
-    benchmark_throughput(workload_path, workload_off, client_builder, n_ops, n_procs)
+    benchmark_throughput(workload_path, workload_off, client_builder, n_ops, n_procs, log_interval=1000)
 
 
 def s3_bench_latency(bucket, workload_path, workload_off=0, n_ops=100000):

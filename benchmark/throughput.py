@@ -11,7 +11,8 @@ logging.basicConfig(level=logging.INFO,
                     datefmt="%Y-%m-%d %X")
 
 
-def _load_and_run_workload(n_load, load_cv, start_cv, workload_path, workload_off, client_builder, n_ops, n_procs):
+def _load_and_run_workload(n_load, load_cv, start_cv, workload_path, workload_off, client_builder, n_ops, n_procs,
+                           log_interval):
     client = client_builder()
     workload = make_workload(workload_path, workload_off, n_ops, client)
 
@@ -33,12 +34,14 @@ def _load_and_run_workload(n_load, load_cv, start_cv, workload_path, workload_of
     while ops < len(workload):
         workload[ops][0](*workload[ops][1])
         ops += 1
+        if ops % log_interval == 0:
+            logging.info("[Process] Completed %d ops" % ops)
     end = time.clock()
 
     print float(ops) / (end - begin)
 
 
-def benchmark_throughput(workload_path, workload_off, client_builder, n_ops, n_procs):
+def benchmark_throughput(workload_path, workload_off, client_builder, n_ops, n_procs, log_interval=100000):
     load_cv = Condition()
     start_cv = Condition()
     n_load = Value('i', 0)
@@ -46,7 +49,7 @@ def benchmark_throughput(workload_path, workload_off, client_builder, n_ops, n_p
                  (workload_path, workload_off, n_ops, n_procs))
     benchmark = [Process(target=_load_and_run_workload,
                          args=(n_load, load_cv, start_cv, workload_path, workload_off + i * (n_ops / n_procs),
-                               client_builder, int(n_ops / n_procs), n_procs,))
+                               client_builder, int(n_ops / n_procs), n_procs, log_interval,))
                  for i in range(n_procs)]
 
     for b in benchmark:
