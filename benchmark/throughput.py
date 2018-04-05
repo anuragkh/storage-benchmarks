@@ -6,6 +6,10 @@ from multiprocessing import Condition, Value, Process
 
 from benchmark.workload import make_workload
 
+logging.basicConfig(level=logging.INFO,
+                    format="%(asctime)s %(levelname)s %(name)s %(message)s",
+                    datefmt="%Y-%m-%d %X")
+
 
 def _load_and_run_workload(n_load, load_cv, start_cv, workload_path, workload_off, client_builder, n_ops, n_procs):
     client = client_builder()

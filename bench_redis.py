@@ -6,6 +6,10 @@ import sys
 
 from benchmark.redis_benchmark import *
 
+logging.basicConfig(level=logging.INFO,
+                    format="%(asctime)s %(levelname)s %(name)s %(message)s",
+                    datefmt="%Y-%m-%d %X")
+
 
 def run_benchmark(host, port):
     workload_paths = ['load', 'workloada', 'workloadb', 'workloadc', 'workloadd']
