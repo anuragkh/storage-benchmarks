@@ -3,6 +3,10 @@ import time
 
 from benchmark.workload import make_workload
 
+logging.basicConfig(level=logging.INFO,
+                    format="%(asctime)s %(levelname)s %(name)s %(message)s",
+                    datefmt="%Y-%m-%d %X")
+
 
 def _load_and_run_latency_benchmark(client_builder, workload_path, workload_off=0, n_ops=100000):
     client = client_builder()
