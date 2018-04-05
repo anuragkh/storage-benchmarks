@@ -42,6 +42,8 @@ def benchmark_throughput(workload_path, workload_off, client_builder, n_ops, n_p
     load_cv = Condition()
     start_cv = Condition()
     n_load = Value('i', 0)
+    logging.info("[Master] Creating processes with workload_path=%s, workload_off=%d, n_ops=%d, n_procs=%d..." %
+                 (workload_path, workload_off, n_ops, n_procs))
     benchmark = [Process(target=_load_and_run_workload,
                          args=(n_load, load_cv, start_cv, workload_path, workload_off + i * (n_ops / n_procs),
                                client_builder, int(n_ops / n_procs), n_procs,))
