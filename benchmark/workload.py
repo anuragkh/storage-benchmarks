@@ -6,6 +6,7 @@ logging.basicConfig(level=logging.INFO,
 
 
 def make_workload(path, off, count, client):
+    logging.info("Loading %d entries from %s from offset %d" % (count, path, off))
     with open(path) as f:
         ops = [x.strip().split() for x in f.readlines()[off:(off + count)]]
         workload = [[getattr(client, x[0]), x[1:]] for x in ops]
