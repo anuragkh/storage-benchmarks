@@ -5,7 +5,9 @@ import boto3
 from benchmark.latency import benchmark_latency
 from benchmark.throughput import benchmark_throughput
 
-logging.getLogger('boto3').setLevel(logging.FATAL)
+logging.getLogger('boto3').setLevel(logging.WARNING)
+logging.getLogger('botocore').setLevel(logging.WARNING)
+logging.getLogger('nose').setLevel(logging.WARNING)
 
 
 class S3Client:
