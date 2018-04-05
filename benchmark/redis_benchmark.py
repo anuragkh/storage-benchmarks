@@ -20,6 +20,9 @@ class RedisClient:
     def remove(self, key):
         return self.r.delete(key)
 
+    def remove_all(self):
+        return self.r.flushdb()
+
 
 class RedisPipelinedClient:
     def __init__(self, host='127.0.0.1', port=6379, max_async=2):
@@ -68,12 +71,12 @@ class RedisPipelinedClientBuilder:
         return RedisPipelinedClient(self.host, self.port, self.max_async)
 
 
-def redis_bench_throughput(host, port, workload_path, workload_off, n_ops=100000, n_procs=1):
+def redis_bench_throughput(host, port, workload_path, workload_off=0, n_ops=100000, n_procs=1):
     client_builder = RedisClientBuilder(host, port)
     benchmark_throughput(workload_path, workload_off, client_builder, n_ops, n_procs)
 
 
-def redis_bench_latency(host, port, workload_path, workload_off, n_ops):
+def redis_bench_latency(host, port, workload_path, workload_off=0, n_ops=100000):
     client_builder = RedisClientBuilder(host, port)
     benchmark_latency(client_builder, workload_path, workload_off, n_ops)
 
@@ -81,3 +84,7 @@ def redis_bench_latency(host, port, workload_path, workload_off, n_ops):
 def redis_bench_pipelined_throughput(host, port, workload_path, workload_off, n_ops=100000, n_procs=1, max_async=2):
     client_builder = RedisPipelinedClientBuilder(host, port, max_async)
     benchmark_throughput(workload_path, workload_off, client_builder, n_ops, n_procs)
+
+
+def redis_clear(host, port):
+    RedisClient(host, port).remove_all()
