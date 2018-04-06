@@ -36,7 +36,7 @@ def benchmark_throughput(workload_path, workload_off, client_builder, n_ops, n_p
                  (workload_path, workload_off, n_ops, n_procs))
     benchmark = [Process(target=_load_and_run_workload,
                          args=(barrier, workload_path, workload_off + i * (n_ops / n_procs),
-                               client_builder, int(n_ops / n_procs), n_procs, log_interval,))
+                               client_builder, int(n_ops / n_procs), log_interval,))
                  for i in range(n_procs)]
 
     for b in benchmark:
