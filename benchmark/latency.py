@@ -19,7 +19,7 @@ def _load_and_run_latency_benchmark(client_builder, workload_path, workload_off=
         begin = time.time()
         workload[ops][0](*workload[ops][1])
         tot = time.time() - begin
-        print "%f" % (tot * 1e6)
+        print("%f" % (tot * 1e6))
         ops += 1
         tot_time += (tot * 1e6)
     logging.info("Completed latency benchmark; average latency = %f us" % (tot_time / ops))

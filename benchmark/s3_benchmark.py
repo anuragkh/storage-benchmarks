@@ -1,7 +1,6 @@
 import logging
 
 import boto3
-import botocore
 from botocore.exceptions import ClientError
 
 from benchmark.latency import benchmark_latency
