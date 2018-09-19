@@ -1,6 +1,7 @@
 from redis import StrictRedis
 
 from benchmark.latency import benchmark_latency
+from benchmark.scale import benchmark_scale
 from benchmark.throughput import benchmark_throughput
 
 
@@ -84,6 +85,11 @@ def redis_bench_latency(host, port, workload_path, workload_off=0, n_ops=100000)
 def redis_bench_pipelined_throughput(host, port, workload_path, workload_off, n_ops=100000, n_procs=1, max_async=2):
     client_builder = RedisPipelinedClientBuilder(host, port, max_async)
     benchmark_throughput(workload_path, workload_off, client_builder, n_ops, n_procs)
+
+
+def redis_bench_scale(host, port, n_ops=5000000, n_procs=1, value_size=1024):
+    client_builder = RedisClientBuilder(host, port)
+    benchmark_scale(client_builder, n_ops, n_procs, value_size)
 
 
 def redis_clear(host, port):
