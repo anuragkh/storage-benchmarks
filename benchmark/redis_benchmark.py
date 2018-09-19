@@ -1,4 +1,5 @@
 from redis import StrictRedis
+from rediscluster import StrictRedisCluster
 
 from benchmark.latency import benchmark_latency
 from benchmark.scale import benchmark_scale
@@ -8,6 +9,26 @@ from benchmark.throughput import benchmark_throughput
 class RedisClient:
     def __init__(self, host='127.0.0.1', port=6379):
         self.r = StrictRedis(host=host, port=port, db=0)
+
+    def get(self, key):
+        return self.r.get(key)
+
+    def put(self, key, value):
+        return self.r.set(key, value, nx=True)
+
+    def update(self, key, value):
+        return self.r.set(key, value, xx=True)
+
+    def remove(self, key):
+        return self.r.delete(key)
+
+    def remove_all(self):
+        return self.r.flushdb()
+
+
+class RedisClusterClient:
+    def __init__(self, host='127.0.0.1', port=6379):
+        self.r = StrictRedisCluster(startup_nodes=[{"host": host, "port": port}], decode_responses=True)
 
     def get(self, key):
         return self.r.get(key)
@@ -62,6 +83,15 @@ class RedisClientBuilder:
         return RedisClient(self.host, self.port)
 
 
+class RedisClusterClientBuilder:
+    def __init__(self, host='127.0.0.1', port=6379):
+        self.host = host
+        self.port = port
+
+    def __call__(self):
+        return RedisClusterClient(self.host, self.port)
+
+
 class RedisPipelinedClientBuilder:
     def __init__(self, host='127.0.0.1', port=6379, max_async=2):
         self.host = host
@@ -88,7 +118,7 @@ def redis_bench_pipelined_throughput(host, port, workload_path, workload_off, n_
 
 
 def redis_bench_scale(host, port, n_ops=5000000, n_procs=1, value_size=1024):
-    client_builder = RedisClientBuilder(host, port)
+    client_builder = RedisClusterClientBuilder(host, port)
     benchmark_scale(client_builder, n_ops, n_procs, value_size)
 
 

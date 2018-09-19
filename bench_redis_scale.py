@@ -30,7 +30,12 @@ def run_scale_up(cluster_name, from_n, to_n):
             waiter = client.get_waiter('cache_cluster_available')
             logging.info('Waiting for scaling to complete')
             start = time.time()
-            waiter.wait()
+            waiter.wait(
+                WaiterConfig={
+                    'Delay': 1,
+                    'MaxAttempts': 86400
+                }
+            )
             end = time.time()
             f.write('{} {}\n'.format(end, i))
             logging.info('Scaling complete in {}s'.format(end - start))

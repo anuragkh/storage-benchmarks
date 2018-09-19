@@ -27,7 +27,7 @@ def _run_workload(barrier, client_id, client_builder, n_ops, value_size):
             f.write("%f %f\n" % (begin * 1e6, tot * 1e6))
             ops += 1
             tot_time += (tot * 1e6)
-        logging.info("[Process] Completed latency benchmark; average latency = %f us" % (tot_time / ops))
+        logging.info("[Process] Completed scale benchmark; average latency = %f us" % (tot_time / ops))
 
 
 def benchmark_scale(client_builder, n_ops=5000000, n_procs=1, value_size=1024):
