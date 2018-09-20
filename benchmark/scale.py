@@ -30,7 +30,7 @@ def _run_workload(barrier, client_id, client_builder, n_ops, value_size):
         logging.info("[Process] Completed scale benchmark; average latency = %f us" % (tot_time / ops))
 
 
-def benchmark_scale(client_builder, n_ops=5000000, n_procs=1, value_size=1024):
+def benchmark_scale(client_builder, n_ops=5000000, n_procs=1, value_size=128):
     barrier = Barrier(n_procs)
     logging.info("[Master] Creating processes with n_ops=%d, n_procs=%d..." % (n_ops, n_procs))
     benchmark = [Process(target=_run_workload, args=(barrier, i, client_builder, int(n_ops / n_procs), value_size,))

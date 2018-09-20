@@ -2,6 +2,7 @@
 
 import argparse
 import logging
+import sys
 import time
 from multiprocessing import Process
 
@@ -9,9 +10,7 @@ import boto3
 
 from benchmark.redis_benchmark import *
 
-logging.basicConfig(level=logging.INFO,
-                    format="%(asctime)s %(levelname)s %(name)s %(message)s",
-                    datefmt="%Y-%m-%d %X")
+logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(name)s %(message)s", datefmt="%Y-%m-%d %X")
 
 
 def run_scale_up(cluster_name, from_n, to_n):
@@ -19,7 +18,8 @@ def run_scale_up(cluster_name, from_n, to_n):
     with open('scale_nodes', 'w') as f:
         f.write('{} {}\n'.format(time.time() * 1e6, from_n))
         for i in range(from_n + 1, to_n + 1):
-            time.sleep(10)
+            time.sleep(60)
+            f.write('{} {}\n'.format(time.time() * 1e6, i - 1))
             logging.info('Scaling cluster={} to {} nodes'.format(cluster_name, i))
             response = client.modify_replication_group_shard_configuration(
                 ReplicationGroupId=cluster_name,
@@ -38,12 +38,13 @@ def run_scale_up(cluster_name, from_n, to_n):
             )
             end = time.time()
             f.write('{} {}\n'.format(end, i))
-            logging.info('Scaling complete in {}s'.format(end - start))
+            logging.info('Scaling to {} nodes complete in {}s'.format(i, end - start))
 
 
-def run_benchmark(host, port):
+def run_benchmark(host, port, num_ops, num_clients, value_size=128):
     logging.info("Benchmarking scale for redis")
-    redis_bench_scale(host, port)
+    client_builder = RedisClusterClientBuilder(host, port)
+    benchmark_scale(client_builder, num_ops, num_clients, value_size)
 
 
 if __name__ == "__main__":
@@ -51,10 +52,14 @@ if __name__ == "__main__":
     parser.add_argument('--host', type=str, default='127.0.0.1', help='ElastiCache host')
     parser.add_argument('--port', type=int, default=6379, help='ElastiCache port')
     parser.add_argument('--cluster', type=str, default='mycluster', help='ElastiCache cluster name')
+    parser.add_argument('--num-ops', type=int, default=sys.maxsize, help='Number of operations to run')
+    parser.add_argument('--num-clients', type=int, default=1, help='Number of ElastiCache clients')
+    parser.add_argument('--value-size', type=int, default=128, help='Value size')
     parser.add_argument('--initial-scale', type=int, default=1, help='Initial #nodes in ElastiCache cluster')
-    parser.add_argument('--final-scale', type=int, default=2, help='Final #nodes in ElastiCache cluster')
+    parser.add_argument('--final-scale', type=int, default=5, help='Final #nodes in ElastiCache cluster')
+
     args = parser.parse_args()
     p = Process(target=run_scale_up, args=(args.cluster, args.initial_scale, args.final_scale))
     p.start()
-    run_benchmark(args.host, args.port)
+    run_benchmark(args.host, args.port, args.num_ops, args.num_clients, args.value_size)
     p.join()
