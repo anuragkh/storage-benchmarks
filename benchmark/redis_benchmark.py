@@ -28,7 +28,8 @@ class RedisClient:
 
 class RedisClusterClient:
     def __init__(self, host='127.0.0.1', port=6379):
-        self.r = StrictRedisCluster(startup_nodes=[{"host": host, "port": port}], decode_responses=True)
+        self.r = StrictRedisCluster(startup_nodes=[{"host": host, "port": port}], decode_responses=True,
+                                    skip_full_coverage_check=True)
 
     def get(self, key):
         return self.r.get(key)
