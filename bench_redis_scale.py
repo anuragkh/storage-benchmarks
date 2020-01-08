@@ -37,7 +37,7 @@ def run_scale_up(cluster_name, from_n, to_n):
                 }
             )
             end = time.time()
-            f.write('{} {}\n'.format(end % 1e6, i))
+            f.write('{} {}\n'.format(end * 1e6, i))
             logging.info('Scaling to {} nodes complete in {}s'.format(i, end - start))
 
 
